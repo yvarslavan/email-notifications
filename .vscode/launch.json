@@ -1,0 +1,43 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}\\venv\\Scripts\\python.exe"
+        },
+        {
+            "name": "Run: APScheduler service (runner.py)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}\\runner.py",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "python": "${workspaceFolder}\\venv\\Scripts\\python.exe",
+            "env": {
+                "PYTHONUNBUFFERED": "1",
+                "EMAIL_NOTIFIC_INTERVAL_SECONDS": "15"
+            }
+        },
+        {
+            "name": "Run: Single execution (Notific.py)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}\\Notific.py",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "python": "${workspaceFolder}\\venv\\Scripts\\python.exe",
+            "env": {
+                "PYTHONUNBUFFERED": "1"
+            }
+        }
+    ]
+}

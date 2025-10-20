@@ -1,0 +1,17 @@
+[Unit]
+Description=Email notifications persistent service (APScheduler runner)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=yvarslavan
+WorkingDirectory=/opt/www/email_notifications_current
+Environment=PYTHONUNBUFFERED=1
+Environment=EMAIL_NOTIFIC_INTERVAL_SECONDS=60
+ExecStart=/opt/www/email_notifications_current/venv/bin/python /opt/www/email_notifications_current/runner.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
