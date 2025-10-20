@@ -16,7 +16,7 @@ logger.setLevel(logging.INFO)
 
 # Ротация логов: максимум 5MB, 3 файла
 file_handler = RotatingFileHandler(
-    'runner.log', 
+    'runner.log',
     maxBytes=5*1024*1024,  # 5MB
     backupCount=3,
     encoding='utf-8'
@@ -37,7 +37,7 @@ logger.addHandler(console_handler)
 def get_execution_interval():
     """Получает интервал выполнения из переменной окружения с обработкой ошибок."""
     try:
-        interval = int(os.getenv('EXECUTION_INTERVAL', '300'))  # По умолчанию 5 минут
+        interval = int(os.getenv('EXECUTION_INTERVAL', '15'))  # По умолчанию 5 минут
         if interval < 60:  # Минимум 1 минута
             logger.warning("Интервал выполнения слишком мал (%d сек), установлен минимум 60 сек" % interval)
             interval = 60
@@ -53,16 +53,16 @@ def run_once():
     """Выполняет Notific.py один раз с улучшенной обработкой ошибок."""
     try:
         logger.info("Запуск Notific.py...")
-        
+
         # Определяем путь к Python и скрипту
         python_executable = sys.executable
         script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'Notific.py')
-        
+
         # Проверяем существование скрипта
         if not os.path.exists(script_path):
             logger.error("Файл Notific.py не найден по пути: %s" % script_path)
             return False
-        
+
         # Запускаем процесс с таймаутом
         result = subprocess.run(
             [python_executable, script_path],
@@ -72,7 +72,7 @@ def run_once():
             encoding='utf-8',
             errors='replace'
         )
-        
+
         if result.returncode == 0:
             logger.info("Notific.py выполнен успешно")
             # Логируем только важные сообщения из stdout
@@ -88,7 +88,7 @@ def run_once():
             if result.stdout:
                 logger.error("Вывод Notific.py: %s" % result.stdout.strip())
             return False
-            
+
     except subprocess.TimeoutExpired:
         logger.error("Notific.py превысил лимит времени выполнения (30 минут)")
         return False
@@ -110,19 +110,19 @@ def signal_handler(signum, frame):
 def main():
     """Основная функция планировщика с улучшенной обработкой ошибок."""
     logger.info("Запуск планировщика email уведомлений")
-    
+
     # Регистрируем обработчики сигналов
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
-    
+
     try:
         # Получаем интервал выполнения
         interval = get_execution_interval()
         logger.info("Интервал выполнения: %d секунд" % interval)
-        
+
         # Создаем планировщик
         scheduler = BlockingScheduler()
-        
+
         # Добавляем задачу
         scheduler.add_job(
             func=run_once,
@@ -133,12 +133,12 @@ def main():
             coalesce=True,    # Объединяем пропущенные запуски
             misfire_grace_time=30  # 30 секунд на опоздание
         )
-        
+
         logger.info("Планировщик настроен и запущен")
-        
+
         # Запускаем планировщик
         scheduler.start()
-        
+
     except KeyboardInterrupt:
         logger.info("Получен сигнал прерывания, завершение работы...")
     except SystemExit:

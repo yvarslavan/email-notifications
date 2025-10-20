@@ -23,7 +23,7 @@
             "python": "${workspaceFolder}\\venv\\Scripts\\python.exe",
             "env": {
                 "PYTHONUNBUFFERED": "1",
-                "EMAIL_NOTIFIC_INTERVAL_SECONDS": "15"
+                "EXECUTION_INTERVAL": "15"
             }
         },
         {
