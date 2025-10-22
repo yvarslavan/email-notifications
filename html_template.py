@@ -77,6 +77,12 @@ def html_contact () :
     return html
 
 def template_html_new_issue_msk (issueID, subject, description, status, created_on) :
+    # Экранируем переменные для защиты от XSS
+    safe_issueID = escape(str(issueID))
+    safe_subject = escape(str(subject))
+    safe_description = escape(str(description))
+    safe_status = escape(str(status))
+    safe_created_on = escape(str(created_on))
 
     html= '''
 <html>
@@ -88,7 +94,7 @@ def template_html_new_issue_msk (issueID, subject, description, status, created_
         <tr>
             <td align="center" valign="top" bgcolor="#ecd8bf" style="padding: 20px;">
                 <table width="700" border="1" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
-                    
+
                     <!-- Стильная шапка -->
                     <tr>
                         <td style="padding: 0; margin: 0; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);">
@@ -113,62 +119,62 @@ def template_html_new_issue_msk (issueID, subject, description, status, created_
                             </table>
                         </td>
                     </tr>
-                    
+
                     <!-- Тонкая красная акцентная полоса -->
                     <tr>
                         <td style="padding: 0; margin: 0;">
                             <div style="width: 100%; height: 1px; background: linear-gradient(90deg, #e94560 0%, #ff6b6b 50%, #e94560 100%); margin: 0; padding: 0;"></div>
                         </td>
                     </tr>
-                    
+
                     <!-- Основной контент -->
                     <tr align="top">
                         <td bgcolor="#f1eff0" style="padding: 20px 25px; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border-left: 4px solid #3498db;">
                             <div style="font-family: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2c3e50; line-height: 1.5;">
-                                
+
                                 <!-- Приветствие -->
                                 <div style="margin-bottom: 15px;">
                                     Здравствуйте!
                                 </div>
-                                
+
                                 <!-- Информация о регистрации -->
                                 <div style="background: rgba(52, 152, 219, 0.1); border-radius: 6px; padding: 12px; margin-bottom: 15px; border-left: 3px solid #3498db;">
-                                    Ваше обращение в IT-Департамент зарегистрировано в системе под номером - #<strong>''' + issueID + '''</strong><br />
+                                    Ваше обращение в IT-Департамент зарегистрировано в системе под номером - #<strong>''' + safe_issueID + '''</strong><br />
                                     Сохраняйте, пожалуйста, историю переписки.
                                 </div>
-                                
+
                                 <!-- Информационное сообщение -->
                                 <div style="background: rgba(255, 193, 7, 0.1); border-radius: 6px; padding: 12px; margin-bottom: 15px; border-left: 4px solid #ffc107;">
                                     <p style="text-align: justify; margin: 0; color: #856404; font-size: 13px; line-height: 1.4;">
                                         <ins><small><em>Это автоматическое сообщение. Пожалуйста, дождитесь нашего ответа и не создавайте новые заявки, отправляя письма на <a href="mailto:help@tez-tour.com" target="_blank" style="color: #856404; text-decoration: underline;">help@tez-tour.com</a>, так как это может увеличить время обработки вашего запроса. При ответах, пожалуйста, не изменяйте тему письма.</em></small></ins>
                                     </p>
                                 </div>
-                                
+
                                 <!-- Ссылка на портал -->
                                 <div style="background: rgba(40, 167, 69, 0.1); border-radius: 6px; padding: 12px; margin-bottom: 15px; border-left: 4px solid #28a745;">
                                     <p style="margin: 0; color: #155724; font-size: 14px; line-height: 1.4;">
                                         Вы также можете посмотреть и обработать свои заявки, зарегистрировавшись на ресурсе <a href="https://its.tez-tour.com" style="color: #155724; text-decoration: underline; font-weight: 500;">https://its.tez-tour.com</a> с использованием вашего аккаунта TEZ ERP.
                                     </p>
                                 </div>
-                                
+
                                 <!-- Детали заявки -->
                                 <div style="background: #f8f9fa; border-radius: 6px; padding: 12px; margin-bottom: 15px; border: 1px solid #e9ecef;">
                                     <table cellspacing="0" style="width: 100%;">
                                         <tr>
                                             <td style="color: #6c757d; font-weight: 500; padding: 2px 0;"><FONT size=3>&nbsp;&nbsp;&bull;&nbsp;Тема:</FONT></td>
-                                            <td style="color: #2c3e50; padding: 2px 0;"><FONT size=3><strong>''' + subject + '''</strong></FONT></td>
+                                            <td style="color: #2c3e50; padding: 2px 0;"><FONT size=3><strong>''' + safe_subject + '''</strong></FONT></td>
                                         </tr>
                                         <tr>
                                             <td style="color: #6c757d; font-weight: 500; padding: 2px 0;"><FONT size=3>&nbsp;&nbsp;&bull;&nbsp;Статус:</FONT></td>
-                                            <td style="color: #2c3e50; padding: 2px 0;"><FONT size=3><strong>''' + status + '''</strong></FONT></td>
+                                            <td style="color: #2c3e50; padding: 2px 0;"><FONT size=3><strong>''' + safe_status + '''</strong></FONT></td>
                                         </tr>
                                         <tr>
                                             <td style="color: #6c757d; font-weight: 500; padding: 2px 0;"><FONT size=3>&nbsp;&nbsp;&bull;&nbsp;Дата создания:</FONT></td>
-                                            <td style="color: #2c3e50; padding: 2px 0;"><FONT size=3><strong>''' + created_on + '''</strong></FONT></td>
+                                            <td style="color: #2c3e50; padding: 2px 0;"><FONT size=3><strong>''' + safe_created_on + '''</strong></FONT></td>
                                         </tr>
                                     </table>
                                 </div>
-                                
+
                                 <!-- Разделитель -->
                                 <table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
                                     <tr>
@@ -178,12 +184,12 @@ def template_html_new_issue_msk (issueID, subject, description, status, created_
                                         <td style="height: 8px;">&nbsp;</td>
                                     </tr>
                                 </table>
-                                
+
                                 <!-- Описание заявки -->
                                 <div style="background: #ffffff; border-radius: 6px; padding: 15px; border: 1px solid #e9ecef; margin-bottom: 15px;">
-                                    <pre style="font-family: 'Segoe UI', Arial, Helvetica, sans-serif; white-space: pre-wrap; margin: 0; color: #2c3e50; font-size: 14px; line-height: 1.5;">''' + description + '''</pre>
+                                    <pre style="font-family: 'Segoe UI', Arial, Helvetica, sans-serif; white-space: pre-wrap; margin: 0; color: #2c3e50; font-size: 14px; line-height: 1.5;">''' + safe_description + '''</pre>
                                 </div>
-                                
+
                                 <!-- Разделитель -->
                                 <table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
                                     <tr>
@@ -196,7 +202,7 @@ def template_html_new_issue_msk (issueID, subject, description, status, created_
                             </div>
                         </td>
                     </tr>
-                    
+
                     <!-- Стильный футер -->
                     <tr>
                         <td style="padding: 0; margin: 0; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);">
@@ -268,14 +274,14 @@ def template_html_new_issue_ukr (issueID, subject, description, status, created_
     <ins>
         <small>
             <em>
-                Это автоматическое сообщение. Пожалуйста, дождитесь нашего ответа и не создавайте новые заявки, отправляя письма на 
+                Это автоматическое сообщение. Пожалуйста, дождитесь нашего ответа и не создавайте новые заявки, отправляя письма на
                 <a href="mailto:it@teztour.com.ua" target="_blank">it@teztour.com.ua</a>, так как это может увеличить время обработки вашего запроса. При ответах, пожалуйста, не изменяйте тему письма.
             </em>
         </small>
     </ins>
 </p>
 <p>
-    Вы также можете посмотреть и обработать свои заявки, зарегистрировавшись на ресурсе 
+    Вы также можете посмотреть и обработать свои заявки, зарегистрировавшись на ресурсе
     <a href="https://its.tez-tour.com">https://its.tez-tour.com</a> с использованием вашего аккаунта TEZ ERP.
 </p>
 
@@ -370,14 +376,14 @@ def template_html_new_issue_spain (issueID, subject, description, status, create
     <ins>
         <small>
             <em>
-                Это автоматическое сообщение. Пожалуйста, дождитесь нашего ответа и не создавайте новые заявки, отправляя письма на 
+                Это автоматическое сообщение. Пожалуйста, дождитесь нашего ответа и не создавайте новые заявки, отправляя письма на
                 <a href="mailto:help@teztour.es" target="_blank">help@teztour.es</a>, так как это может увеличить время обработки вашего запроса. При ответах, пожалуйста, не изменяйте тему письма.
             </em>
         </small>
     </ins>
 </p>
 <p>
-    Вы также можете посмотреть и обработать свои заявки, зарегистрировавшись на ресурсе 
+    Вы также можете посмотреть и обработать свои заявки, зарегистрировавшись на ресурсе
     <a href="https://its.tez-tour.com">https://its.tez-tour.com</a> с использованием вашего аккаунта TEZ ERP.
 </p>
 
@@ -522,7 +528,7 @@ def template_html (issueID, body, strParam, oldParam, newParam, dateCreated, aut
 <div style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border-radius: 8px; padding: 20px; margin-bottom: 20px; border-left: 4px solid #f39c12;">
 <p style="text-align: justify; margin: 0; color: #856404; font-size: 13px; line-height: 1.5;">
     <em>
-        Это автоматическое сообщение. Пожалуйста, дождитесь нашего ответа и не создавайте новые заявки, отправляя письма на 
+        Это автоматическое сообщение. Пожалуйста, дождитесь нашего ответа и не создавайте новые заявки, отправляя письма на
         <a href="mailto:help@tez-tour.com" target="_blank" style="color: #e67e22; text-decoration: none; font-weight: 600;">help@tez-tour.com</a>, так как это может увеличить время обработки вашего запроса. При ответах, пожалуйста, не изменяйте тему письма.
     </em>
 </p>
@@ -530,7 +536,7 @@ def template_html (issueID, body, strParam, oldParam, newParam, dateCreated, aut
 
 <div style="background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%); border-radius: 8px; padding: 20px; border-left: 4px solid #17a2b8;">
 <p style="margin: 0; color: #0c5460; font-size: 14px; line-height: 1.5;">
-    Вы также можете посмотреть и обработать свои заявки, зарегистрировавшись на ресурсе 
+    Вы также можете посмотреть и обработать свои заявки, зарегистрировавшись на ресурсе
     <a href="https://its.tez-tour.com" style="color: #17a2b8; text-decoration: none; font-weight: 600;">https://its.tez-tour.com</a> с использованием вашего аккаунта TEZ ERP.
 </p>
 </div>
@@ -835,7 +841,7 @@ def template_html_Assigned (issueID, body, strParam, oldParam, newParam, dateCre
 <div style="background: rgba(255, 193, 7, 0.1); border-radius: 8px; padding: 20px; margin-bottom: 20px; border-left: 4px solid #ffc107;">
 <p style="text-align: justify; margin: 0; color: #856404; font-size: 13px; line-height: 1.5;">
 <em>
-Это автоматическое сообщение. Пожалуйста, дождитесь нашего ответа и не создавайте новые заявки, отправляя письма на 
+Это автоматическое сообщение. Пожалуйста, дождитесь нашего ответа и не создавайте новые заявки, отправляя письма на
 <a href="mailto:help@tez-tour.com" target="_blank" style="color: #856404; text-decoration: underline;">help@tez-tour.com</a>, так как это может увеличить время обработки вашего запроса. При ответах, пожалуйста, не изменяйте тему письма.
 </em>
 </p>
@@ -844,7 +850,7 @@ def template_html_Assigned (issueID, body, strParam, oldParam, newParam, dateCre
 <!-- Ссылка на портал -->
 <div style="background: rgba(40, 167, 69, 0.1); border-radius: 8px; padding: 20px; border-left: 4px solid #28a745;">
 <p style="margin: 0; color: #155724; font-size: 14px; line-height: 1.5;">
-Вы также можете посмотреть и обработать свои заявки, зарегистрировавшись на ресурсе 
+Вы также можете посмотреть и обработать свои заявки, зарегистрировавшись на ресурсе
 <a href="https://its.tez-tour.com" style="color: #155724; text-decoration: underline; font-weight: 500;">https://its.tez-tour.com</a> с использованием вашего аккаунта TEZ ERP.
 </p>
 </div>
@@ -870,7 +876,7 @@ def template_html_Assigned (issueID, body, strParam, oldParam, newParam, dateCre
             </div>
         </div>
     </div>
-   
+
 </td>
 </tr>
 </table>
@@ -885,8 +891,8 @@ def template_html_Assigned (issueID, body, strParam, oldParam, newParam, dateCre
 </html>
 '''
     return html
-    
-    
+
+
 
 def template_html_AddNotes (issueID, notes) :
     html = '''
@@ -916,10 +922,10 @@ def template_html_AddNotes (issueID, notes) :
 			<div style="background:linear-gradient(135deg, #ecf0f1 0%, #e8f4f8 100%); border-radius:10px; border:1px solid #d5dbdb; box-shadow:0 4px 15px rgba(0,0,0,0.1); padding:25px; margin-bottom:20px;">
 				<div style="border-left:4px solid #3498db; padding-left:20px;">
 					<h3 style="color:#2c3e50; font-family:'Segoe UI',Tahoma,Verdana,Arial,sans-serif; font-size:18px; font-weight:600; margin-bottom:15px; margin-left:15px; margin-right:15px; margin-top:15px; text-shadow:0 1px 2px rgba(0,0,0,0.1); text-align:left">Новый комментарий</h3>
-					
+
 					<div style="background:rgba(255,255,255,0.8); border-radius:6px; box-shadow:inset 0 1px 3px rgba(0,0,0,0.1); color:#34495e; font-family:'Segoe UI',Tahoma,Verdana,Arial,sans-serif; font-size:15px; line-height:1.6; padding:20px; text-align:left; word-wrap:break-word; white-space:pre-wrap;">
 						<p style="margin-bottom:15px; color:#2c3e50; font-weight:500;">В задачу <a href="https://helpdesk.teztour.com/issues/''' + issueID + '''" style="color:#3498db; text-decoration:none; border-bottom:1px solid #3498db;"><strong>#''' + issueID + '''</strong></a> добавлен новый комментарий:</p>
-						
+
 						<div style="background:rgba(52, 152, 219, 0.1); border-left:3px solid #3498db; border-radius:6px; padding:15px; margin-top:15px;">
 							<pre style="font-family:'Segoe UI',Tahoma,Verdana,Arial,sans-serif; font-size:14px; color:#34495e; line-height:1.6; margin:0; white-space:pre-wrap; word-wrap:break-word;">''' + notes + '''</pre>
 						</div>
@@ -1044,14 +1050,14 @@ def template_html_new_issue_content (issueID, subject, description, status, crea
     <ins>
         <small>
             <em>
-                Это автоматическое сообщение. Пожалуйста, дождитесь нашего ответа и не создавайте новые заявки, отправляя письма на 
+                Это автоматическое сообщение. Пожалуйста, дождитесь нашего ответа и не создавайте новые заявки, отправляя письма на
                 <a href="mailto:content@tez-tour.com" target="_blank">content@tez-tour.com</a>, так как это может увеличить время обработки вашего запроса. При ответах, пожалуйста, не изменяйте тему письма.
             </em>
         </small>
     </ins>
 </p>
 <p>
-    Вы также можете посмотреть и обработать свои заявки, зарегистрировавшись на ресурсе 
+    Вы также можете посмотреть и обработать свои заявки, зарегистрировавшись на ресурсе
     <a href="https://its.tez-tour.com">https://its.tez-tour.com</a> с использованием вашего аккаунта TEZ ERP.
 </p>
 
@@ -1342,14 +1348,14 @@ def template_html_new_issue_ukr_watcher(issueID, subject, description, status, c
     <ins>
         <small>
             <em>
-                Это автоматическое сообщение. Пожалуйста, дождитесь нашего ответа и не создавайте новые заявки, отправляя письма на 
+                Это автоматическое сообщение. Пожалуйста, дождитесь нашего ответа и не создавайте новые заявки, отправляя письма на
                 <a href="mailto:help@tez-tour.com" target="_blank">help@tez-tour.com</a>, так как это может увеличить время обработки вашего запроса. При ответах, пожалуйста, не изменяйте тему письма.
             </em>
         </small>
     </ins>
 </p>
 <p>
-    Вы также можете посмотреть и обработать свои заявки, зарегистрировавшись на ресурсе 
+    Вы также можете посмотреть и обработать свои заявки, зарегистрировавшись на ресурсе
     <a href="https://its.tez-tour.com">https://its.tez-tour.com</a> с использованием вашего аккаунта TEZ ERP.
 </p>
 
@@ -1443,7 +1449,7 @@ def template_html_new_issue_content_Minsk (issueID, subject, description, status
     <ins>
         <small>
             <em>
-                Это автоматическое сообщение. Пожалуйста, дождитесь нашего ответа и не создавайте новые заявки, отправляя письма на 
+                Это автоматическое сообщение. Пожалуйста, дождитесь нашего ответа и не создавайте новые заявки, отправляя письма на
                 <a href="mailto:content@minsk.tez-tour.com" target="_blank">content@minsk.tez-tour.com</a>, так как это может увеличить время обработки вашего запроса.<br>
                 При ответах, пожалуйста, не изменяйте тему письма.
             </em>
@@ -1451,7 +1457,7 @@ def template_html_new_issue_content_Minsk (issueID, subject, description, status
     </ins>
 </p>
 <p>
-    Вы также можете посмотреть и обработать свои заявки, зарегистрировавшись на ресурсе 
+    Вы также можете посмотреть и обработать свои заявки, зарегистрировавшись на ресурсе
     <a href="https://its.tez-tour.com">https://its.tez-tour.com</a> с использованием вашего аккаунта TEZ ERP.
 </p>
 
@@ -1592,14 +1598,14 @@ def template_html_new_issue_Ufa (issueID, subject, description, status, created_
 </html>
 '''
     return html
-    
+
 
 def template_html_new_issue_vln(issueID, subject, description, status, created_on):
     # Экранируем специальные символы для безопасности
     safe_subject = escape(subject)
     safe_status = escape(status)
     safe_created_on = escape(created_on)
-    
+
     html_template = '''
 <html>
 <head>
@@ -1615,7 +1621,7 @@ def template_html_new_issue_vln(issueID, subject, description, status, created_o
                             <table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
                                 <tr>
                                     <td style="width: 350px;" width="350" bgcolor="#f1eff0" align="left">
-                                        <img src="https://r.tez-tour.com/armmanager/images/teztour_logo.png" 
+                                        <img src="https://r.tez-tour.com/armmanager/images/teztour_logo.png"
                                              alt="TEZ TOUR" title="TEZ TOUR" style="width: 200px;" width="200" border="0">
                                     </td>
                                     <td align="right" bgcolor="#f1eff0" width="400">
@@ -1643,15 +1649,15 @@ def template_html_new_issue_vln(issueID, subject, description, status, created_o
                                 <ins>
                                     <small>
                                         <em>
-                                            Это автоматическое сообщение. Пожалуйста, дождитесь нашего ответа и не создавайте новые заявки, отправляя письма на 
-                                            <a href="mailto:help@tez-tour.com" target="_blank">help@tez-tour.com</a>, так как это может увеличить время обработки вашего запроса. 
+                                            Это автоматическое сообщение. Пожалуйста, дождитесь нашего ответа и не создавайте новые заявки, отправляя письма на
+                                            <a href="mailto:help@tez-tour.com" target="_blank">help@tez-tour.com</a>, так как это может увеличить время обработки вашего запроса.
                                             При ответах, пожалуйста, не изменяйте тему письма.
                                         </em>
                                     </small>
                                 </ins>
                             </p>
                             <p>
-                                Вы также можете посмотреть и обработать свои заявки, зарегистрировавшись на ресурсе 
+                                Вы также можете посмотреть и обработать свои заявки, зарегистрировавшись на ресурсе
                                 <a href="https://its.tez-tour.com">https://its.tez-tour.com</a> с использованием вашего аккаунта TEZ ERP.
                             </p>
 
@@ -1934,7 +1940,7 @@ def template_html_new(issueID, body, strParam, oldParam, newParam, dateCreated, 
 </html>
 '''
     return html
-    
+
 
 
 def template_html_new_issue_msk_new_template(issueID, subject, description, status, created_on):
@@ -1987,13 +1993,13 @@ def template_html_new_issue_msk_new_template(issueID, subject, description, stat
             <div class="header">
                 <h1>TEZ TOUR - Техническая поддержка</h1>
             </div>
-            
+
             <div class="content">
                 <div class="greeting">
                     Здравствуйте!<br>
                     Создана новая заявка в системе технической поддержки TEZ TOUR.
                 </div>
-                
+
                 <div class="issue-card">
                     <div class="issue-header">
                         <div class="issue-icon">
@@ -2001,7 +2007,7 @@ def template_html_new_issue_msk_new_template(issueID, subject, description, stat
                         </div>
                         <div class="issue-title">Заявка #''' + issueID + '''</div>
                     </div>
-                    
+
                     <div class="issue-details">
                         <div class="detail-item">
                             <div class="detail-label">Тема</div>
@@ -2023,18 +2029,18 @@ def template_html_new_issue_msk_new_template(issueID, subject, description, stat
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="warning">
                     <strong>Важно:</strong>
                     Это автоматическое сообщение. Пожалуйста, не отвечайте на это письмо.
                 </div>
-                
+
                 <div class="portal-section">
                     <div class="portal-title">Управляйте заявками в Redmine</div>
                     <p style="color: #495057; margin-bottom: 20px;">
                         Получите полный контроль над своими задачами с современной системой управления проектами
                     </p>
-                    
+
                     <div class="portal-features">
                         <div class="feature-item">Kanban доска</div>
                         <div class="feature-item">14 статусов</div>
@@ -2043,17 +2049,17 @@ def template_html_new_issue_msk_new_template(issueID, subject, description, stat
                         <div class="feature-item">Мобильная версия</div>
                         <div class="feature-item">Real-time обновления</div>
                     </div>
-                    
+
                     <a href="https://its.tez-tour.com" class="portal-link">
                         Открыть Redmine
                     </a>
-                    
+
                     <p style="font-size: 12px; color: #6c757d; margin-top: 15px;">
                         Используйте ваш аккаунт TEZ ERP для входа
                     </p>
                 </div>
             </div>
-            
+
             <div class="footer">
                 <p>© 2025 TEZ TOUR. Все права защищены.</p>
                 <p>Это автоматическое сообщение системы технической поддержки.</p>
@@ -2061,8 +2067,8 @@ def template_html_new_issue_msk_new_template(issueID, subject, description, stat
         </div>
     </body>
     </html>
-    '''    
-    
+    '''
+
 
 
 def template_html_Assigned_new(issueID, body, strParam, oldParam, newParam, dateCreated, title, author, status, priority, assigned, add_notes):
@@ -2339,11 +2345,11 @@ def template_html_Assigned_vln(issueID, body, strParam, oldParam, newParam, date
                 ''' + notes_html + '''
                 <br><br>
                 <p class="footer-note">
-                    Это автоматическое сообщение. Пожалуйста, дождитесь нашего ответа и не создавайте новые заявки, отправляя письма на 
+                    Это автоматическое сообщение. Пожалуйста, дождитесь нашего ответа и не создавайте новые заявки, отправляя письма на
                     <a href="mailto:help@tez-tour.com" target="_blank">help@tez-tour.com</a>, так как это может увеличить время обработки вашего запроса. При ответах, пожалуйста, не изменяйте тему письма.
                 </p>
                 <p>
-                    Вы также можете посмотреть и обработать свои заявки, зарегистрировавшись на ресурсе 
+                    Вы также можете посмотреть и обработать свои заявки, зарегистрировавшись на ресурсе
                     <a href="https://its.tez-tour.com">https://its.tez-tour.com</a> с использованием вашего аккаунта TEZ ERP.
                 </p>
             </div>
@@ -2360,5 +2366,3 @@ def template_html_Assigned_vln(issueID, body, strParam, oldParam, newParam, date
 </html>
 '''
     return html
-    
-    

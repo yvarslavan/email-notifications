@@ -3,6 +3,7 @@
 
 import os
 import sys
+import time
 import subprocess
 import logging
 from logging.handlers import RotatingFileHandler
@@ -37,31 +38,43 @@ logger.addHandler(console_handler)
 def get_execution_interval():
     """Получает интервал выполнения из переменной окружения с обработкой ошибок."""
     try:
-        interval = int(os.getenv('EXECUTION_INTERVAL', '15'))  # По умолчанию 5 минут
+        interval = int(os.getenv('EXECUTION_INTERVAL', '300'))  # По умолчанию 5 минут
+        original_interval = interval
+
         if interval < 60:  # Минимум 1 минута
-            logger.warning("Интервал выполнения слишком мал (%d сек), установлен минимум 60 сек" % interval)
+            logger.warning("⚠️  Интервал выполнения слишком мал (%d сек), установлен минимум 60 сек" % interval)
             interval = 60
         elif interval > 3600:  # Максимум 1 час
-            logger.warning("Интервал выполнения слишком велик (%d сек), установлен максимум 3600 сек" % interval)
+            logger.warning("⚠️  Интервал выполнения слишком велик (%d сек), установлен максимум 3600 сек" % interval)
             interval = 3600
+
+        if original_interval != interval:
+            logger.info("📝 Интервал изменен с %d на %d секунд" % (original_interval, interval))
+
         return interval
     except (ValueError, TypeError) as e:
-        logger.error("Ошибка получения интервала выполнения: %s. Используется значение по умолчанию 300 сек" % str(e))
+        logger.error("💥 Ошибка получения интервала выполнения: %s. Используется значение по умолчанию 300 сек" % str(e))
         return 300
 
 def run_once():
     """Выполняет Notific.py один раз с улучшенной обработкой ошибок."""
-    try:
-        logger.info("Запуск Notific.py...")
+    start_time = time.time()
+    logger.info("🔄 " + "=" * 50)
+    logger.info("🚀 ЗАПУСК NOTIFIC.PY")
+    logger.info("⏰ Время запуска: %s" % time.strftime("%Y-%m-%d %H:%M:%S"))
 
+    try:
         # Определяем путь к Python и скрипту
         python_executable = sys.executable
         script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'Notific.py')
 
         # Проверяем существование скрипта
         if not os.path.exists(script_path):
-            logger.error("Файл Notific.py не найден по пути: %s" % script_path)
+            logger.error("❌ Файл Notific.py не найден по пути: %s" % script_path)
             return False
+
+        logger.info("📁 Путь к скрипту: %s" % script_path)
+        logger.info("🐍 Python интерпретатор: %s" % python_executable)
 
         # Запускаем процесс с таймаутом
         result = subprocess.run(
@@ -73,33 +86,53 @@ def run_once():
             errors='replace'
         )
 
+        execution_time = time.time() - start_time
+        logger.info("⏱️  Время выполнения: %.2f секунд" % execution_time)
+
         if result.returncode == 0:
-            logger.info("Notific.py выполнен успешно")
+            logger.info("✅ Notific.py выполнен успешно")
             # Логируем только важные сообщения из stdout
             if result.stdout.strip():
                 for line in result.stdout.strip().split('\n'):
                     if any(keyword in line.lower() for keyword in ['error', 'warning', 'exception', 'failed']):
-                        logger.warning("Вывод Notific.py: %s" % line.strip())
+                        logger.warning("⚠️  Вывод Notific.py: %s" % line.strip())
+            logger.info("🔄 " + "=" * 50)
             return True
         else:
-            logger.error("Notific.py завершился с кодом ошибки %d" % result.returncode)
+            logger.error("❌ Notific.py завершился с кодом ошибки %d" % result.returncode)
             if result.stderr:
-                logger.error("Ошибки Notific.py: %s" % result.stderr.strip())
+                logger.error("💥 Ошибки Notific.py: %s" % result.stderr.strip())
             if result.stdout:
-                logger.error("Вывод Notific.py: %s" % result.stdout.strip())
+                logger.error("📋 Вывод Notific.py: %s" % result.stdout.strip())
+            logger.info("🔄 " + "=" * 50)
             return False
 
     except subprocess.TimeoutExpired:
-        logger.error("Notific.py превысил лимит времени выполнения (30 минут)")
+        execution_time = time.time() - start_time
+        logger.error("⏰ Notific.py превысил лимит времени выполнения (30 минут)")
+        logger.error("⏱️  Время до таймаута: %.2f секунд" % execution_time)
+        logger.info("🔄 " + "=" * 50)
         return False
     except subprocess.CalledProcessError as e:
-        logger.error("Ошибка выполнения Notific.py: код %d, сообщение: %s" % (e.returncode, str(e)))
+        execution_time = time.time() - start_time
+        logger.error("💥 Ошибка выполнения Notific.py: код %d, сообщение: %s" % (e.returncode, str(e)))
+        logger.error("⏱️  Время до ошибки: %.2f секунд" % execution_time)
+        logger.info("🔄 " + "=" * 50)
         return False
     except FileNotFoundError:
-        logger.error("Python интерпретатор не найден: %s" % python_executable)
+        execution_time = time.time() - start_time
+        logger.error("🐍 Python интерпретатор не найден: %s" % python_executable)
+        logger.error("⏱️  Время до ошибки: %.2f секунд" % execution_time)
+        logger.info("🔄 " + "=" * 50)
         return False
     except Exception as e:
-        logger.error("Неожиданная ошибка при выполнении Notific.py: %s" % str(e))
+        execution_time = time.time() - start_time
+        logger.error("💥 Неожиданная ошибка при выполнении Notific.py: %s" % str(e))
+        logger.error("🔍 Тип ошибки: %s" % type(e).__name__)
+        logger.error("⏱️  Время до ошибки: %.2f секунд" % execution_time)
+        import traceback
+        logger.error("📋 Трассировка ошибки:\n%s" % traceback.format_exc())
+        logger.info("🔄 " + "=" * 50)
         return False
 
 def signal_handler(signum, frame):
@@ -109,7 +142,12 @@ def signal_handler(signum, frame):
 
 def main():
     """Основная функция планировщика с улучшенной обработкой ошибок."""
-    logger.info("Запуск планировщика email уведомлений")
+    logger.info("=" * 60)
+    logger.info("🚀 ЗАПУСК ПЛАНИРОВЩИКА EMAIL УВЕДОМЛЕНИЙ")
+    logger.info("=" * 60)
+    logger.info("Время запуска: %s" % time.strftime("%Y-%m-%d %H:%M:%S"))
+    logger.info("Версия Python: %s" % sys.version.split()[0])
+    logger.info("Рабочая директория: %s" % os.getcwd())
 
     # Регистрируем обработчики сигналов
     signal.signal(signal.SIGINT, signal_handler)
@@ -118,7 +156,7 @@ def main():
     try:
         # Получаем интервал выполнения
         interval = get_execution_interval()
-        logger.info("Интервал выполнения: %d секунд" % interval)
+        logger.info("⏰ Интервал выполнения: %d секунд (%.1f минут)" % (interval, interval/60))
 
         # Создаем планировщик
         scheduler = BlockingScheduler()
@@ -134,20 +172,29 @@ def main():
             misfire_grace_time=30  # 30 секунд на опоздание
         )
 
-        logger.info("Планировщик настроен и запущен")
+        logger.info("✅ Планировщик настроен и готов к работе")
+        logger.info("📋 Задача 'Email Notifications Job' добавлена")
+        logger.info("🔄 Следующий запуск через %d секунд" % interval)
+        logger.info("=" * 60)
 
         # Запускаем планировщик
         scheduler.start()
 
     except KeyboardInterrupt:
-        logger.info("Получен сигнал прерывания, завершение работы...")
+        logger.info("⚠️  Получен сигнал прерывания (Ctrl+C), завершение работы...")
     except SystemExit:
-        logger.info("Системный выход, завершение работы...")
+        logger.info("⚠️  Системный выход, завершение работы...")
     except Exception as e:
-        logger.error("Критическая ошибка планировщика: %s" % str(e))
+        logger.error("💥 КРИТИЧЕСКАЯ ОШИБКА ПЛАНИРОВЩИКА: %s" % str(e))
+        logger.error("🔍 Тип ошибки: %s" % type(e).__name__)
+        import traceback
+        logger.error("📋 Трассировка ошибки:\n%s" % traceback.format_exc())
         sys.exit(1)
     finally:
-        logger.info("Планировщик остановлен")
+        logger.info("=" * 60)
+        logger.info("🛑 ПЛАНИРОВЩИК ОСТАНОВЛЕН")
+        logger.info("Время остановки: %s" % time.strftime("%Y-%m-%d %H:%M:%S"))
+        logger.info("=" * 60)
 
 if __name__ == "__main__":
     main()

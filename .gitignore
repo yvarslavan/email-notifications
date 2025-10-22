@@ -168,3 +168,6 @@ Thumbs.db
 
 # Email templates cache
 email_templates_cache/
+
+.env
+*.env
