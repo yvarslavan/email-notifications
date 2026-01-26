@@ -70,6 +70,27 @@ EXECUTION_INTERVAL=300
 
 # Для отладки - интервал в секундах
 EMAIL_NOTIFIC_INTERVAL_SECONDS=15
+
+# SMTP конфигурация (для send_sequrity_email.py)
+SMTP_SERVER=mail.tez-tour.com
+SMTP_PORT=25
+SMTP_USER=help@tez-tour.com
+SMTP_PASSWORD=your_smtp_password_here
+
+# Получатель сервисного письма
+EMAIL_RECIPIENT=security@tez-tour.com
+
+# Отправитель (если не задан, используется SMTP_USER)
+# EMAIL_SENDER=it_dep@tez-tour.com
+
+# Тестовый режим (если задан, письмо уходит на этот адрес)
+# TEST_EMAIL=test@example.com
+
+# Запуск сервиса send_sequrity_email.py
+# SERVICE_START=True
+
+# Интервал проверки планировщика (например: "60 minutes")
+# SERVICE_INTERVAL=60 minutes
 ```
 
 ### Настройка базы данных
@@ -85,6 +106,8 @@ EMAIL_NOTIFIC_INTERVAL_SECONDS=15
 - SMTP хост и порт
 - Учетные данные для аутентификации
 - Настройки TLS/SSL
+
+Для `send_sequrity_email.py` SMTP параметры берутся только из `.env`.
 
 ## Использование
 

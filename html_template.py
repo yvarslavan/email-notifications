@@ -2061,7 +2061,7 @@ def template_html_new_issue_msk_new_template(issueID, subject, description, stat
             </div>
 
             <div class="footer">
-                <p>© 2025 TEZ TOUR. Все права защищены.</p>
+                <p>© 2026 TEZ TOUR. Все права защищены.</p>
                 <p>Это автоматическое сообщение системы технической поддержки.</p>
             </div>
         </div>
@@ -2245,7 +2245,7 @@ def template_html_Assigned_new(issueID, body, strParam, oldParam, newParam, date
             </div>
 
             <div class="footer">
-                <p>© 2025 TEZ TOUR. Все права защищены.</p>
+                <p>© 2026 TEZ TOUR. Все права защищены.</p>
                 <p>Это автоматическое сообщение системы технической поддержки.</p>
             </div>
         </div>
