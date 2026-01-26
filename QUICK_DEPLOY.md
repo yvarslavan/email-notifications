@@ -5,11 +5,11 @@
 ### 1. Подготовка окружения
 ```cmd
 # Переход в рабочую директорию
-cd C:\Users\VARSLAVAN.DESKTOP-MNJ5CKG\PythonProjects
+cd C:\Users\VARSLAVAN\Projects
 
 # Клонирование репозитория
-git clone <repository-url> its.teztour.com
-cd its.teztour.com
+git clone <repository-url> email_notifications_current
+cd email_notifications_current
 
 # Создание виртуального окружения
 python -m venv venv
@@ -101,11 +101,11 @@ pip3 --version
 sudo useradd -m -s /bin/bash yvarslavan
 
 # Создание директории проекта
-sudo mkdir -p /opt/www/its.teztour.com
-sudo chown yvarslavan:yvarslavan /opt/www/its.teztour.com
+sudo mkdir -p /opt/www/email_notifications_current
+sudo chown yvarslavan:yvarslavan /opt/www/email_notifications_current
 
 # Переход в директорию
-cd /opt/www/its.teztour.com
+cd /opt/www/email_notifications_current
 ```
 
 ### 3. Клонирование и настройка проекта
@@ -116,9 +116,12 @@ sudo -u yvarslavan git clone <repository-url> .
 # Создание виртуального окружения
 sudo -u yvarslavan python3 -m venv venv
 
-# Активация и установка зависимостей
-sudo -u yvarslavan /opt/www/its.teztour.com/venv/bin/pip install --upgrade pip
-sudo -u yvarslavan /opt/www/its.teztour.com/venv/bin/pip install -r requirements.txt
+# Активация виртуального окружения (Linux)
+source /opt/www/email_notifications_current/venv/bin/activate
+
+# Установка зависимостей
+pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
 ### 4. Настройка конфигурации
@@ -148,6 +151,98 @@ sudo systemctl start email-notific.service
 sudo systemctl status email-notific.service
 ```
 
+---
+
+## ✉️ Новый сервис send_sequrity_email.py (по аналогии)
+
+Ниже приведены шаги для создания отдельного systemd-сервиса для квартальной рассылки. Логика идентична основному сервису, но запускает `send_sequrity_email.py`.
+
+### 1. Создание unit-файла systemd
+
+Создайте файл `/etc/systemd/system/email-sequrity.service`:
+
+```ini
+[Unit]
+Description=Email Sequrity Notifications Service
+After=network.target
+
+[Service]
+Type=simple
+User=yvarslavan
+WorkingDirectory=/opt/www/email_notifications_current
+Environment=PYTHONUNBUFFERED=1
+Environment=SEQURITY_ENV_FILE=/opt/www/email_notifications_current/.env.sequrity
+ExecStart=/opt/www/email_notifications_current/venv/bin/python /opt/www/email_notifications_current/send_sequrity_email.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### 2. Перезагрузка systemd и запуск
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable email-sequrity.service
+sudo systemctl start email-sequrity.service
+sudo systemctl status email-sequrity.service
+```
+
+### 3. Конфигурация .env для сервиса
+
+Создайте отдельный файл конфигурации `.env.sequrity`:
+
+```bash
+SMTP_SERVER=mail.tez-tour.com
+SMTP_PORT=25
+SMTP_USER=help@tez-tour.com
+SMTP_PASSWORD=your_actual_smtp_password
+
+EMAIL_RECIPIENT=security@tez-tour.com
+# EMAIL_SENDER=help@tez-tour.com
+# TEST_EMAIL=test@example.com
+
+SERVICE_START=True
+SERVICE_INTERVAL=1 day
+```
+
+Пример команды создания файла:
+```bash
+sudo -u yvarslavan nano /opt/www/email_notifications_current/.env.sequrity
+```
+
+> Важно: основной `.env` для `Notific.py` оставьте без изменений.
+
+### 4. Конфигурация .env для сервиса (Windows)
+
+Создайте отдельный файл `.env.sequrity` в корне проекта и укажите переменную окружения перед запуском:
+
+```cmd
+set SEQURITY_ENV_FILE=C:\Users\VARSLAVAN\Projects\email_notifications_current\.env.sequrity
+venv\Scripts\activate
+python send_sequrity_email.py
+```
+
+Пример содержимого `.env.sequrity`:
+```bash
+SMTP_SERVER=mail.tez-tour.com
+SMTP_PORT=25
+SMTP_USER=it_dep@tez-tour.com
+SMTP_PASSWORD=your_actual_smtp_password
+
+EMAIL_RECIPIENT=moscow@tez-tour.com
+
+SERVICE_START=True
+SERVICE_INTERVAL=1 day
+```
+
+### 5. Проверка логов
+
+```bash
+sudo journalctl -u email-sequrity.service -f
+```
+
 ### 6. Настройка firewall (если необходимо)
 ```bash
 # Проверка статуса firewall
@@ -169,7 +264,7 @@ sudo firewall-cmd --reload
 python -c "import mysql.connector; print('MySQL connector OK')"
 
 # Linux
-sudo -u yvarslavan /opt/www/its.teztour.com/venv/bin/python -c "import mysql.connector; print('MySQL connector OK')"
+sudo -u yvarslavan /opt/www/email_notifications_current/venv/bin/python -c "import mysql.connector; print('MySQL connector OK')"
 ```
 
 ### Тест SMTP подключения
@@ -178,7 +273,7 @@ sudo -u yvarslavan /opt/www/its.teztour.com/venv/bin/python -c "import mysql.con
 python -c "import smtplib; print('SMTP module OK')"
 
 # Linux
-sudo -u yvarslavan /opt/www/its.teztour.com/venv/bin/python -c "import smtplib; print('SMTP module OK')"
+sudo -u yvarslavan /opt/www/email_notifications_current/venv/bin/python -c "import smtplib; print('SMTP module OK')"
 ```
 
 ### Тест однократного запуска
@@ -188,7 +283,7 @@ venv\Scripts\activate
 python Notific.py
 
 # Linux
-sudo -u yvarslavan /opt/www/its.teztour.com/venv/bin/python /opt/www/its.teztour.com/Notific.py
+sudo -u yvarslavan /opt/www/email_notifications_current/venv/bin/python /opt/www/email_notifications_current/Notific.py
 ```
 
 ---
@@ -214,7 +309,7 @@ sudo systemctl status email-notific.service
 sudo journalctl -u email-notific.service -f
 
 # Логи приложения
-tail -f /opt/www/its.teztour.com/notific.log
+tail -f /opt/www/email_notifications_current/notific.log
 
 # Процессы Python
 ps aux | grep python
@@ -290,12 +385,12 @@ sudo systemd-analyze verify /etc/systemd/system/email-notific.service
 ### Если проблемы с зависимостями
 ```bash
 # Переустановка зависимостей
-sudo -u yvarslavan /opt/www/its.teztour.com/venv/bin/pip install --force-reinstall -r requirements.txt
+sudo -u yvarslavan /opt/www/email_notifications_current/venv/bin/pip install --force-reinstall -r requirements.txt
 ```
 
 ### Если проблемы с правами доступа
 ```bash
 # Исправление прав
-sudo chown -R yvarslavan:yvarslavan /opt/www/its.teztour.com/
-sudo chmod +x /opt/www/its.teztour.com/runner.py
+sudo chown -R yvarslavan:yvarslavan /opt/www/email_notifications_current/
+sudo chmod +x /opt/www/email_notifications_current/runner.py
 ```

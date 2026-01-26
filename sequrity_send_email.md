@@ -43,3 +43,18 @@
 ```bash
 python send_sequrity_email.py
 ```
+
+## Отдельный файл конфигурации
+Если основной сервис `Notific.py` использует свой `.env`, можно задать отдельный файл для этого сервиса через переменную `SEQURITY_ENV_FILE`.
+
+Пример (Linux):
+```bash
+export SEQURITY_ENV_FILE=/opt/www/email_notifications_current/.env.sequrity
+python send_sequrity_email.py
+```
+
+Пример (Windows):
+```cmd
+set SEQURITY_ENV_FILE=C:\Users\VARSLAVAN\Projects\email_notifications_current\.env.sequrity
+python send_sequrity_email.py
+```

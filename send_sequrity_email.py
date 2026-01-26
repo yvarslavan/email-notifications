@@ -3,6 +3,7 @@ import smtplib
 import logging
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Optional
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -55,6 +56,27 @@ def create_message(sender: str, recipient: str):
         logger.warning(f"Logo file not found at {logo_path}")
 
     return msg
+
+
+def _resolve_env_file() -> Optional[str]:
+    env_file = os.getenv("SEQURITY_ENV_FILE")
+    default_env = os.path.join(os.path.dirname(__file__), ".env.sequrity")
+
+    if env_file:
+        if not os.path.exists(env_file):
+            logger.warning(
+                "SEQURITY_ENV_FILE указан, но файл не найден: %s. Попытка использовать %s",
+                env_file,
+                default_env,
+            )
+            if os.path.exists(default_env):
+                return default_env
+        return env_file
+
+    if os.path.exists(default_env):
+        return default_env
+
+    return None
 
 def _resolve_recipient(config):
     if config.test_email:
@@ -115,7 +137,7 @@ def _current_quarter_state(now: datetime) -> QuarterState:
     return QuarterState(year=now.year, quarter=quarter)
 
 
-def _load_last_quarter_state(state_path: str) -> QuarterState | None:
+def _load_last_quarter_state(state_path: str) -> Optional[QuarterState]:
     if not os.path.exists(state_path):
         return None
     try:
@@ -156,7 +178,8 @@ def run_quarterly_cycle(config, state_path: str) -> None:
     _store_last_quarter_state(state_path, _current_quarter_state(now))
 
 def main():
-    config = load_email_config()
+    env_file = _resolve_env_file()
+    config = load_email_config(env_file)
 
     if not config.service_start:
         logger.info("Service is disabled (SERVICE_START=False). Exiting.")

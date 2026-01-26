@@ -1,11 +1,13 @@
 import os
 from dataclasses import dataclass
+from typing import Optional
+
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
-def _parse_bool(value: str | None, default: bool) -> bool:
+def _parse_bool(value: Optional[str], default: bool) -> bool:
     if value is None:
         return default
     return value.strip().lower() in {"1", "true", "yes", "y", "on"}
@@ -13,18 +15,21 @@ def _parse_bool(value: str | None, default: bool) -> bool:
 
 @dataclass(frozen=True)
 class EmailConfig:
-    smtp_server: str | None
-    smtp_port: int | None
-    smtp_user: str | None
-    smtp_password: str | None
-    email_recipient: str | None
-    email_sender: str | None
-    test_email: str | None
+    smtp_server: Optional[str]
+    smtp_port: Optional[int]
+    smtp_user: Optional[str]
+    smtp_password: Optional[str]
+    email_recipient: Optional[str]
+    email_sender: Optional[str]
+    test_email: Optional[str]
     service_start: bool
-    service_interval: str | None
+    service_interval: Optional[str]
 
 
-def load_email_config() -> EmailConfig:
+def load_email_config(env_file: Optional[str] = None) -> EmailConfig:
+    if env_file:
+        load_dotenv(env_file, override=True)
+
     smtp_port_raw = os.getenv("SMTP_PORT")
     smtp_port = int(smtp_port_raw) if smtp_port_raw else None
     smtp_user = os.getenv("SMTP_USER")
